@@ -127,7 +127,7 @@ describe("statements", () => {
         expect(response.statusCode).not.toBe(201);
     });
 
-    it("should allow balance", async () => {
+    it("should show specific statement", async () => {
         const depositResponse = await request(app)
             .post("/api/v1/statements/deposit")
             .set('Authorization', `Token ${token}`)

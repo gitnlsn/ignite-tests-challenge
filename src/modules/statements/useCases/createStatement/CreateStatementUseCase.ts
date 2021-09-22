@@ -1,4 +1,5 @@
 import { inject, injectable } from "tsyringe";
+import { ITransfersRepository } from "../../../transfers/repositories/ITransferRepository";
 
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
@@ -12,7 +13,10 @@ export class CreateStatementUseCase {
     private usersRepository: IUsersRepository,
 
     @inject('StatementsRepository')
-    private statementsRepository: IStatementsRepository
+    private statementsRepository: IStatementsRepository,
+
+    @inject('TransfersRepository')
+    private transfersRepository: ITransfersRepository
   ) {}
 
   async execute({ user_id, type, amount, description }: ICreateStatementDTO) {
@@ -23,9 +27,10 @@ export class CreateStatementUseCase {
     }
 
     if(type === 'withdraw') {
-      const { balance } = await this.statementsRepository.getUserBalance({ user_id });
+      const { balance: statementsBalance } = await this.statementsRepository.getUserBalance({ user_id });
+      const { balance: transfersBalance } = await this.transfersRepository.getUserBalance({ user_id });
 
-      if (balance < amount) {
+      if (statementsBalance + transfersBalance < amount) {
         throw new CreateStatementError.InsufficientFunds()
       }
     }

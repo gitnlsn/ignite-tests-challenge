@@ -1,6 +1,8 @@
 import { User } from "../../../users/entities/User";
 import { InMemoryUsersRepository } from "../../../users/repositories/in-memory/InMemoryUsersRepository";
+import { InMemoryTransfersRepository } from "../../../transfers/repositories/inMemory/InMemoryTransfersRepository";
 import { IUsersRepository } from "../../../users/repositories/IUsersRepository";
+import { ITransfersRepository } from "../../../transfers/repositories/ITransferRepository";
 import { InMemoryStatementsRepository } from "../../repositories/in-memory/InMemoryStatementsRepository";
 import { IStatementsRepository } from "../../repositories/IStatementsRepository";
 import { CreateStatementError } from "./CreateStatementError";
@@ -14,6 +16,7 @@ enum OperationType {
 describe("CreateStatementUseCase", () => {
     // InMemory repositories
     let statementsRepository: IStatementsRepository;
+    let transfersRepository: ITransfersRepository;
     let usersRepository: IUsersRepository;
 
     // createstatementUseCase
@@ -30,10 +33,12 @@ describe("CreateStatementUseCase", () => {
     beforeEach(async () => {
         statementsRepository = new InMemoryStatementsRepository();
         usersRepository = new InMemoryUsersRepository();
+        transfersRepository = new InMemoryTransfersRepository();
 
         createStatementUseCase = new CreateStatementUseCase(
             usersRepository,
-            statementsRepository
+            statementsRepository,
+            transfersRepository
         );
 
         await usersRepository.create({
